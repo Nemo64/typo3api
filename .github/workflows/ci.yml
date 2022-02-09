@@ -6,11 +6,9 @@ jobs:
 
   typo3-8-7:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         php: [7.4, 7.3, 7.2, 7.1, 7.0]
-
     steps:
       - uses: actions/checkout@v2
       - uses: php-actions/composer@v6
@@ -24,16 +22,46 @@ jobs:
 
   typo3-9-5:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        php: [7.4, 7.3, 7.3, 7.2]
-
+        php: [7.4, 7.3, 7.2]
     steps:
       - uses: actions/checkout@v2
       - uses: php-actions/composer@v6
         with:
           command: require typo3/cms-core:~9.5.0
+          php_version: ${{ matrix.php }}
+      - uses: php-actions/phpunit@v3
+        with:
+          version: 6.5
+          php_version: ${{ matrix.php }}
+
+  typo3-10-4:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [7.4, 7.3, 7.2]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: php-actions/composer@v6
+        with:
+          command: require typo3/cms-core:~10.4.0
+          php_version: ${{ matrix.php }}
+      - uses: php-actions/phpunit@v3
+        with:
+          version: 6.5
+          php_version: ${{ matrix.php }}
+
+  typo3-11-5:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [8.0, 7.4]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: php-actions/composer@v6
+        with:
+          command: require typo3/cms-core:~11.5.0
           php_version: ${{ matrix.php }}
       - uses: php-actions/phpunit@v3
         with:
