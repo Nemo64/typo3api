@@ -210,6 +210,10 @@ class TableBuilder implements TcaBuilderInterface
 
     public function getTitle(): string
     {
+        if (!isset($GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'])) {
+            return '';
+        }
+
         if (!is_string($GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'])) {
             return '';
         }
@@ -346,6 +350,10 @@ class TableBuilder implements TcaBuilderInterface
         $showItemString = $configuration->getShowItemString($this->context);
         if ($showItemString === '') {
             return;
+        }
+
+        if (!isset($type['showitem'])) {
+            $type['showitem'] = '';
         }
 
         // search the correct tab and add the content into it

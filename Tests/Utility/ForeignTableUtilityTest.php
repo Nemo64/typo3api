@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class ForeignTableUtilityTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($GLOBALS['TCA']);
     }
