@@ -34,7 +34,7 @@ class ImageFieldTest extends FileFieldTest
     {
         $stubTable = new TableBuilderContext('stub_table', '1');
 
-        $this->assertEquals([
+        $expectedColumns = [
             $field->getName() => [
                 'label' => $field->getOption('label'),
                 'config' => ExtensionManagementUtility::getFileFieldTCAConfig($field->getName(), [
@@ -87,7 +87,17 @@ class ImageFieldTest extends FileFieldTest
                     ]
                 ], 'gif,jpg,jpeg,tif,tiff,png')
             ]
-        ], $field->getColumns($stubTable));
+        ];
+
+
+        $actualColumns = $field->getColumns($stubTable);
+
+        // typo3 8 has labels in the palette ~ remove that to make the test compatible
+        array_walk_recursive($actualColumns, function (&$value) {
+            $value = preg_replace('/--palette--;LLL[^;]+;/', '--palette--;;', $value);
+        });
+
+        $this->assertEquals($expectedColumns, $actualColumns);
     }
 
     /**
