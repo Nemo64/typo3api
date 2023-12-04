@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca;
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,7 +14,7 @@ class CustomConfiguration implements TcaConfigurationInterface
     /**
      * @var array
      */
-    private $options;
+    private readonly array $options;
 
     public function __construct(array $options)
     {

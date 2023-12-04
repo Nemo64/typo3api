@@ -1,11 +1,11 @@
 <?php
 
-namespace Typo3Api\Tca;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca;
 
 use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\Builder\Context\TcaBuilderContext;
-
 
 /**
  * This is a configuration containing multiple configurations.
@@ -15,15 +15,15 @@ use Typo3Api\Builder\Context\TcaBuilderContext;
 class CompoundTcaConfiguration implements TcaConfigurationInterface, \IteratorAggregate
 {
     /**
-     * This field is protected so extending implementations can access it.
-     *
-     * @var TcaConfigurationInterface[]
+     * @param TcaConfigurationInterface[] $children
      */
-    protected $children;
-
-    public function __construct(array $children = [])
+    public function __construct(
+        /**
+         * This field is protected so extending implementations can access it.
+         */
+        protected array $children = []
+    )
     {
-        $this->children = $children;
     }
 
     /**
@@ -36,12 +36,10 @@ class CompoundTcaConfiguration implements TcaConfigurationInterface, \IteratorAg
 
     final public function getIterator(): \Iterator
     {
-        foreach ($this->children as $child) {
-            yield $child;
-        }
+        yield from $this->children;
     }
 
-    final public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
+    final public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder): void
     {
         foreach ($this->children as $child) {
             $child->modifyCtrl($ctrl, $tcaBuilder);
@@ -87,8 +85,6 @@ class CompoundTcaConfiguration implements TcaConfigurationInterface, \IteratorAg
 
     public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
-        return implode(',', array_map(function (TcaConfigurationInterface $configuration) use ($tcaBuilder) {
-            return $configuration->getShowItemString($tcaBuilder);
-        }, $this->children));
+        return implode(',', array_map(static fn(TcaConfigurationInterface $configuration) => $configuration->getShowItemString($tcaBuilder), $this->children));
     }
 }

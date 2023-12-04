@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -23,20 +24,18 @@ class SelectField extends AbstractField
             'values' => [],
             // items is the normal typo3 compatible item list
             // if not defined, it will be generated from the value list
-            'items' => function (Options $options) {
-                return array_map(function ($value) {
-                    $label = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $value);
-                    $label = ucfirst(trim(strtolower($label)));
-                    return [$label, $value];
-                }, $options['values']);
-            },
+            'items' => fn(Options $options) => array_map(static function ($value) {
+                $label = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $value);
+                $label = ucfirst(strtolower(trim($label)));
+                return [$label, $value];
+            }, $options['values']),
             'itemsProcFunc' => null,
 
             'required' => true, // TODO i somehow want this to be false now since having an empty option is nice
 
             'dbType' => function (Options $options) {
-                $possibleValues = static::getValuesFromItems($options['items']);
-                $defaultValue = addslashes(reset($possibleValues));
+                $possibleValues = self::getValuesFromItems($options['items']);
+                $defaultValue = addslashes((string) reset($possibleValues));
 
                 $minimumChars = $options['itemsProcFunc'] ? 30 : 1;
                 $maxChars = max($minimumChars, ...array_map('mb_strlen', $possibleValues));
@@ -55,6 +54,8 @@ class SelectField extends AbstractField
                 return "VARCHAR($maxChars) DEFAULT '$defaultValue' NOT NULL";
             },
 
+            'default' => '',
+
             // it doesn't make sense to localize selects (most of the time)
             'localize' => false
         ]);
@@ -63,6 +64,7 @@ class SelectField extends AbstractField
         $resolver->setAllowedTypes('items', 'array');
         $resolver->setAllowedTypes('itemsProcFunc', ['null', 'string']);
         $resolver->setAllowedTypes('required', 'bool');
+        $resolver->setAllowedTypes('default', 'string');
 
         $resolver->setNormalizer('items', function (Options $options, $items) {
             // ensure at least one value, or an empty value if not required
@@ -73,7 +75,7 @@ class SelectField extends AbstractField
             foreach ($items as $value) {
                 // the documentation says these chars are invalid
                 // https://docs.typo3.org/typo3cms/TCAReference/ColumnsConfig/Type/Select.html#items
-                if (preg_match('/[|,;]/', $value[1])) {
+                if (preg_match('/[|,;]/', (string) $value[1])) {
                     throw new InvalidOptionsException("The value in an select must not contain the chars '|,;'.");
                 }
             }
@@ -82,7 +84,7 @@ class SelectField extends AbstractField
         });
     }
 
-    private static function getValuesFromItems(array $items)
+    private static function getValuesFromItems(array $items): array
     {
         $values = [];
 
@@ -105,12 +107,13 @@ class SelectField extends AbstractField
         return $values;
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         $config = [
             'type' => 'select',
             'renderType' => 'selectSingle',
             'items' => $this->getOption('items'),
+            'default' => $this->getOption('default'),
         ];
 
         if ($this->getOption('itemsProcFunc') !== null) {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Typo3Api\Tca;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca;
 
 use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\Builder\Context\TcaBuilderContext;
-
 
 class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTabInterface
 {
@@ -65,13 +65,7 @@ class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTa
     public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         return [
-            $tableBuilder->getTableName() => [
-                "hidden tinyint(1) DEFAULT '0' NOT NULL",
-                "starttime int(11) unsigned DEFAULT '0' NOT NULL",
-                "endtime int(11) unsigned DEFAULT '0' NOT NULL",
-                "fe_group varchar(100) DEFAULT '0' NOT NULL",
-                "editlock tinyint(1) DEFAULT '0' NOT NULL"
-            ]
+            $tableBuilder->getTableName() => []
         ];
     }
 

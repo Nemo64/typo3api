@@ -1,19 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Typo3Api\Hook;
 
-
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CacheTagHook
 {
     /**
-     * @param array $params
-     *
-     * @throws \TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException
+     * @throws NoSuchCacheGroupException
      */
-    public function clearCachePostProcess(array $params)
+    public function clearCachePostProcess(array $params): void
     {
         if (!isset($params['table'])) {
             return;
@@ -30,7 +30,7 @@ class CacheTagHook
                 $tag = str_replace(
                     ['###UID###', '###PID###'],
                     [$params['uid'], $params['uid_page']],
-                    $tag
+                    (string) $tag
                 );
             }
 

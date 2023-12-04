@@ -1,11 +1,11 @@
 <?php
 
-namespace Typo3Api\Tca;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca;
 
 use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\Builder\Context\TcaBuilderContext;
-
 
 class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInterface
 {
@@ -27,19 +27,9 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
         return [
             'sys_language_uid' => [
                 'exclude' => false,
-                'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.language',
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
                 'config' => [
-                    'type' => 'select',
-                    'renderType' => 'selectSingle',
-                    'special' => 'languages',
-                    'items' => [
-                        [
-                            'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
-                            -1,
-                            'flags-multiple'
-                        ],
-                    ],
-                    'default' => 0,
+                    'type' => 'language'
                 ]
             ],
             'l10n_source' => [
@@ -54,14 +44,13 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
                 ]
             ],
             'l18n_parent' => [
-                'exclude' => false,
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
-                'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        ['', 0]
+                        ['label' => '', 'value' => 0]
                     ],
                     'foreign_table' => $tableName,
                     'foreign_table_where' => "AND $tableName.pid=###CURRENT_PID### AND $tableName.sys_language_uid IN (-1,0)",
@@ -97,10 +86,6 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
     {
         return [
             $tableBuilder->getTableName() => [
-                "sys_language_uid int(11) DEFAULT '0' NOT NULL",
-                "l10n_source int(11) DEFAULT '0' NOT NULL",
-                "l18n_diffsource mediumtext",
-                "l18n_parent int(11) DEFAULT '0' NOT NULL",
                 "KEY language (l18n_parent, sys_language_uid)",
             ]
         ];
@@ -110,5 +95,4 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
     {
         return 'LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language';
     }
-
 }

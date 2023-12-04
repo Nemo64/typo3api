@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca;
 
 use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\Builder\Context\TcaBuilderContext;

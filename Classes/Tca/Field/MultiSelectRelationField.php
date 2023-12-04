@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -10,7 +11,6 @@ use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\Builder\Context\TcaBuilderContext;
 use Typo3Api\Builder\TableBuilder;
 use Typo3Api\Utility\ForeignTableUtility;
-
 
 class MultiSelectRelationField extends AbstractField
 {
@@ -28,7 +28,6 @@ class MultiSelectRelationField extends AbstractField
             'minitems' => 0,
             'maxitems' => 100,
             'size' => 7,
-            'enableSearch' => true,
 
             'dbType' => "INT(11) DEFAULT '0' NOT NULL",
             'localize' => false,
@@ -47,9 +46,7 @@ class MultiSelectRelationField extends AbstractField
             return $foreignTable;
         });
 
-        $resolver->setNormalizer('foreign_table_where', function (Options $options, string $where) {
-            return ForeignTableUtility::normalizeForeignTableWhere($options['foreign_table'], $where);
-        });
+        $resolver->setNormalizer('foreign_table_where', fn(Options $options, string $where) => ForeignTableUtility::normalizeForeignTableWhere($options['foreign_table'], $where));
 
         $resolver->setNormalizer('minitems', function (Options $options, $minItems) {
             if ($minItems < 0) {
@@ -71,10 +68,10 @@ class MultiSelectRelationField extends AbstractField
         });
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         if (!$tcaBuilder instanceof TableBuilderContext) {
-            $type = is_object($tcaBuilder) ? get_class($tcaBuilder) : gettype($tcaBuilder);
+            $type = get_debug_type($tcaBuilder);
             throw new \RuntimeException("Expected " . TableBuilderContext::class . ", got $type");
         }
 
@@ -88,7 +85,6 @@ class MultiSelectRelationField extends AbstractField
             'size' => $this->getOption('size'),
             'minitems' => $this->getOption('minitems'),
             'maxitems' => $this->getOption('maxitems'),
-            'enableMultiSelectFilterTextfield' => $this->getOption('enableSearch'),
         ];
     }
 
@@ -129,14 +125,8 @@ class MultiSelectRelationField extends AbstractField
         return $dbTableDefinitions;
     }
 
-    /**
-     * @param TableBuilderContext $tableBuilder
-     *
-     * @return string
-     */
-    protected function getMnTableName(TableBuilderContext $tableBuilder)
+    protected function getMnTableName(TableBuilderContext $tableBuilder): string
     {
         return $tableBuilder->getTableName() . '_' . $this->getOption('name') . '_mm';
     }
-
 }

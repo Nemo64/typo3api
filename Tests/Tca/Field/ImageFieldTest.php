@@ -44,7 +44,6 @@ class ImageFieldTest extends FileFieldTest
                         'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
                         'collapseAll' => true,
                         'showPossibleLocalizationRecords' => true,
-                        'showRemovedLocalizationRecords' => true,
                         'showAllLocalizationLink' => true,
                         'showSynchronizationLink' => true,
                         'enabledControls' => [
@@ -104,7 +103,7 @@ class ImageFieldTest extends FileFieldTest
      * @dataProvider validNameProvider
      * @param string $fieldName
      */
-    public function testThumbnail(string $fieldName)
+    public function testThumbnail(string $fieldName): void
     {
         $stubTable = new TableBuilderContext('stub_table', '1');
         $altFieldName = $fieldName . '_2';

@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Typo3Api\Builder\Context\TcaBuilderContext;
@@ -20,7 +21,7 @@ class RteField extends AbstractField
         $resolver->setAllowedTypes('richtextConfiguration', 'string');
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         return [
             'type' => 'text',

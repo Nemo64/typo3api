@@ -1,0 +1,20 @@
+language: php
+
+matrix:
+  include:
+    - php: 8.0
+      env: dependencies=highest
+
+    - php: 8.0
+      env: dependencies=lowest
+
+install:
+  - if [ "$dependencies" = "highest" ]; then composer update --no-interaction; fi
+  - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest --no-interaction; fi
+
+script:
+  - vendor/bin/phpunit Tests
+
+cache:
+  directories:
+    - $HOME/.composer/cache

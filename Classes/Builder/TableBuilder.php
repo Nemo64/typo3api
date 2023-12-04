@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: marco
@@ -7,7 +9,6 @@
  */
 
 namespace Typo3Api\Builder;
-
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -22,7 +23,7 @@ class TableBuilder implements TcaBuilderInterface
     /**
      * @var TableBuilderContext
      */
-    private $context;
+    private readonly TableBuilderContext $context;
 
     /**
      * This is a list of default tabs.
@@ -31,13 +32,11 @@ class TableBuilder implements TcaBuilderInterface
      *
      * @var array
      */
-    private $defaultTabs = [];
+    private array $defaultTabs = [];
 
     /**
      * TableBuilder constructor.
      *
-     * @param string $tableName
-     * @param string $typeName
      *
      * @internal param string $name
      */
@@ -48,16 +47,13 @@ class TableBuilder implements TcaBuilderInterface
     }
 
     /**
-     * @param string $extkey
-     * @param string $name
-     * @param string $typeName
      *
      * @return TableBuilder
      */
     public static function create(string $name, string $typeName = '1'): TableBuilder
     {
         /** @var TableBuilder $tableBuilder */
-        $tableBuilder = GeneralUtility::makeInstance(get_called_class(), $name, $typeName);
+        $tableBuilder = GeneralUtility::makeInstance(static::class, $name, $typeName);
         if (!$tableBuilder->getTitle()) {
             $title = preg_replace('#tx_[^_]+_#su', '', $name);
             $title = str_replace('_', ' ', $title);
@@ -65,19 +61,6 @@ class TableBuilder implements TcaBuilderInterface
             $tableBuilder->setTitle($title);
         }
         return $tableBuilder;
-    }
-
-    /**
-     * @param string $name
-     * @param string $typeName
-     *
-     * @return TableBuilder
-     * @deprecated use #create instead
-     */
-    public static function createFullyNamed(string $name, string $typeName = '1'): TableBuilder
-    {
-        trigger_error("TableBuilder::createFullyNamed is deprecated, use ::create instead", E_USER_DEPRECATED);
-        return static::create($name, $typeName);
     }
 
     /**
@@ -90,11 +73,10 @@ class TableBuilder implements TcaBuilderInterface
         if ($configuration instanceof DefaultTabInterface) {
             $tabName = $configuration->getDefaultTab();
             $this->defaultTabs[] = $tabName;
-            return $this->configureInTab($tabName, $configuration);
         } else {
             $tabName = 'LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general';
-            return $this->configureInTab($tabName, $configuration);
         }
+        return $this->configureInTab($tabName, $configuration);
     }
 
     /**
@@ -105,7 +87,7 @@ class TableBuilder implements TcaBuilderInterface
      */
     public function configureInTab(string $tab, TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
-        $tca =& $GLOBALS['TCA'][$this->getTableName()];
+        $tca = &$GLOBALS['TCA'][$this->getTableName()];
 
         $configuration->modifyCtrl($tca['ctrl'], $this->context);
         $this->addShowItemToTab($tca, $configuration, $tab);
@@ -122,7 +104,7 @@ class TableBuilder implements TcaBuilderInterface
      */
     public function configureAtPosition(string $position, TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
-        $tca =& $GLOBALS['TCA'][$this->getTableName()];
+        $tca = &$GLOBALS['TCA'][$this->getTableName()];
 
         $configuration->modifyCtrl($tca['ctrl'], $this->context);
         $this->addShowItemAtPosition($tca, $configuration, $position);
@@ -131,7 +113,7 @@ class TableBuilder implements TcaBuilderInterface
         return $this;
     }
 
-    private function addPalettesAndColumns(array &$tca, TcaConfigurationInterface $configuration)
+    private function addPalettesAndColumns(array &$tca, TcaConfigurationInterface $configuration): void
     {
         $this->addPalettes($tca, $configuration);
         if ($configuration instanceof CompoundTcaConfiguration) {
@@ -150,7 +132,7 @@ class TableBuilder implements TcaBuilderInterface
      */
     public function inheritConfigurationFromType(string $type): TcaBuilderInterface
     {
-        $tca =& $GLOBALS['TCA'][$this->getTableName()];
+        $tca = &$GLOBALS['TCA'][$this->getTableName()];
 
         if (!isset($tca['types'][$type])) {
             $msg = "The Type $type isn't defined so it can't be inherited from it.";
@@ -172,19 +154,19 @@ class TableBuilder implements TcaBuilderInterface
      */
     public function addOrMoveTabInFrontOfTab(string $tab, string $otherTab): TcaBuilderInterface
     {
-        $type =& $GLOBALS['TCA'][$this->getTableName()]['types'][$this->getTypeName()];
+        $type = &$GLOBALS['TCA'][$this->getTableName()]['types'][$this->getTypeName()];
 
         $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*?(?=,\s?--div--|$)/Us';
-        $match = preg_match($search, $type['showitem'], $results);
+        $match = preg_match($search, (string) $type['showitem'], $results);
         $newTab = $match ? $results[0] : '--div--; ' . $tab;
 
         if ($match) {
-            $type['showitem'] = preg_replace($search, '', $type['showitem'], 1);
+            $type['showitem'] = preg_replace($search, '', (string) $type['showitem'], 1);
         }
 
         // search the other tab and add the new one in front of it
         $search = '/--div--\s*;\s*' . preg_quote($otherTab, '/') . '.*?(?=,\s?--div--|$)/Us';
-        $type['showitem'] = preg_replace($search, $newTab . ', \0', $type['showitem'], 1, $matches);
+        $type['showitem'] = preg_replace($search, $newTab . ', \0', (string) $type['showitem'], 1, $matches);
         if ($matches === 0) {
             throw new \RuntimeException("The tab '$otherTab' seems to not exist.");
         }
@@ -210,11 +192,7 @@ class TableBuilder implements TcaBuilderInterface
 
     public function getTitle(): string
     {
-        if (!isset($GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'])) {
-            return '';
-        }
-
-        if (!is_string($GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'])) {
+        if (!isset($GLOBALS['TCA'][$this->getTableName()]['ctrl']['title']) || !is_string($GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'])) {
             return '';
         }
 
@@ -238,9 +216,6 @@ class TableBuilder implements TcaBuilderInterface
 
         $GLOBALS['TCA'][$this->getTableName()] = [
             'ctrl' => [],
-            'interface' => [
-                'showRecordFieldList' => '',
-            ],
             'columns' => [],
             'types' => [],
             'palettes' => [],
@@ -252,11 +227,7 @@ class TableBuilder implements TcaBuilderInterface
         return true;
     }
 
-    /**
-     * @param array $tca
-     * @param TcaConfigurationInterface $configuration
-     */
-    protected function addPalettes(array &$tca, TcaConfigurationInterface $configuration)
+    protected function addPalettes(array &$tca, TcaConfigurationInterface $configuration): void
     {
         $palettes = $configuration->getPalettes($this->context);
         foreach ($palettes as $paletteName => $paletteDefinition) {
@@ -274,11 +245,7 @@ class TableBuilder implements TcaBuilderInterface
         }
     }
 
-    /**
-     * @param array $tca
-     * @param TcaConfigurationInterface $configuration
-     */
-    protected function addColumns(array &$tca, TcaConfigurationInterface $configuration)
+    protected function addColumns(array &$tca, TcaConfigurationInterface $configuration): void
     {
         $columns = $configuration->getColumns($this->context);
         $existingColumns = $tca['columns'];
@@ -295,9 +262,10 @@ class TableBuilder implements TcaBuilderInterface
             );
         } else {
             if (count($missingColumns) > 0) {
-                $confClass = get_class($configuration);
+                $confClass = $configuration::class;
                 $definedColumns = implode(', ', array_keys($columns));
-                $alreadyDefinedColumns = implode(', ', array_intersect(array_keys($existingColumns), array_keys($columns)));
+                $alreadyDefinedColumns = implode(', ',
+                    array_intersect(array_keys($existingColumns), array_keys($columns)));
                 $notDefinedColumns = implode(', ', $missingColumns);
                 $msg = "The $confClass defined the database columns $definedColumns.\n";
                 $msg .= "However, the columns $alreadyDefinedColumns are already defined.\n";
@@ -335,30 +303,21 @@ class TableBuilder implements TcaBuilderInterface
         }
     }
 
-    /**
-     * @param array $tca
-     * @param TcaConfigurationInterface $configuration
-     * @param string $tab
-     */
-    protected function addShowItemToTab(array &$tca, TcaConfigurationInterface $configuration, string $tab)
+    protected function addShowItemToTab(array &$tca, TcaConfigurationInterface $configuration, string $tab): void
     {
         if (!isset($tca['types'][$this->getTypeName()])) {
             $tca['types'][$this->getTypeName()] = [];
         }
-        $type =& $tca['types'][$this->getTypeName()];
+        $type = &$tca['types'][$this->getTypeName()];
 
         $showItemString = $configuration->getShowItemString($this->context);
         if ($showItemString === '') {
             return;
         }
 
-        if (!isset($type['showitem'])) {
-            $type['showitem'] = '';
-        }
-
         // search the correct tab and add the content into it
         $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*(?=,\s*--div--|$)/Us';
-        $type['showitem'] = preg_replace($search, '\0,' . $showItemString, $type['showitem'], 1, $matches);
+        $type['showitem'] = preg_replace($search, '\0,' . $showItemString, $type['showitem'] ?? '', 1, $matches);
         if ($matches > 0) {
             return;
         }
@@ -368,8 +327,8 @@ class TableBuilder implements TcaBuilderInterface
         $newTab = '--div--; ' . $tab . ', ' . $showItemString;
 
         // put the new tab right before the first "default tab"
-        if (count($this->defaultTabs) > 0 && !in_array($tab, $this->defaultTabs)) {
-            $search = '/--div--\s*;\s*' . preg_quote(reset($this->defaultTabs), '/') . '.*(?=,\s*--div--|$)/Us';
+        if (count($this->defaultTabs) > 0 && !in_array($tab, $this->defaultTabs, true)) {
+            $search = '/--div--\s*;\s*' . preg_quote((string) reset($this->defaultTabs), '/') . '.*(?=,\s*--div--|$)/Us';
             $type['showitem'] = preg_replace($search, $newTab . ', \0', $type['showitem'], 1, $matches);
             if ($matches > 0) {
                 return;
@@ -384,13 +343,11 @@ class TableBuilder implements TcaBuilderInterface
         }
     }
 
-    /**
-     * @param array $tca
-     * @param TcaConfigurationInterface $configuration
-     * @param string $position
-     */
-    protected function addShowItemAtPosition(array &$tca, TcaConfigurationInterface $configuration, string $position)
-    {
+    protected function addShowItemAtPosition(
+        array &$tca,
+        TcaConfigurationInterface $configuration,
+        string $position
+    ): void {
         $showItemString = $configuration->getShowItemString($this->context);
         if ($showItemString === '') {
             return;

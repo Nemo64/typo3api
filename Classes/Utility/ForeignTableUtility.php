@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Utility;
+declare(strict_types=1);
 
+namespace Typo3Api\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -10,7 +11,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ForeignTableUtility
 {
-    const ORDER_BY_REGEX = '/(\s*)(ORDER BY(.*))?$/i';
+    final public const ORDER_BY_REGEX = '/(\s*)(ORDER BY(.*))?$/i';
 
     public static function normalizeForeignTableWhere(string $foreignTableName, string $where): string
     {
@@ -25,21 +26,21 @@ class ForeignTableUtility
         // append sorting if available
         if (isset($foreignTable['ctrl']['sortby'])) {
             $sortByField = $foreignTableName . '.' . $foreignTable['ctrl']['sortby'];
-            $where = preg_replace_callback(self::ORDER_BY_REGEX, function ($match) use ($sortByField) {
+            $where = preg_replace_callback(self::ORDER_BY_REGEX, static function ($match) use ($sortByField) {
                 if (isset($match[3])) {
                     return ' ORDER BY' . $match[3] . ', ' . $sortByField;
                 }
 
                 return ' ORDER BY ' . $sortByField;
             }, $where, 1);
-        } else if (isset($foreignTable['ctrl']['default_sortby'])) {
+        } elseif (isset($foreignTable['ctrl']['default_sortby'])) {
             $sortByDefinitions = GeneralUtility::trimExplode(',', $foreignTable['ctrl']['default_sortby']);
             foreach ($sortByDefinitions as &$sortByDefinition) {
                 $sortByDefinition = $foreignTableName . '.' . $sortByDefinition;
             }
 
             $sortByStr = implode(', ', $sortByDefinitions);
-            $where = preg_replace_callback(self::ORDER_BY_REGEX, function ($match) use ($sortByStr) {
+            $where = preg_replace_callback(self::ORDER_BY_REGEX, static function ($match) use ($sortByStr) {
                 if (isset($match[3])) {
                     return ' ORDER BY' . $match[3] . ', ' . $sortByStr;
                 }

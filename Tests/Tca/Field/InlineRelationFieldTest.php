@@ -9,7 +9,7 @@ class InlineRelationFieldTest extends AbstractFieldTest
 {
     const STUB_DB_TYPE = "TINYINT(3) UNSIGNED DEFAULT '0' NOT NULL";
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $GLOBALS['TCA']['tx_typo3api_foreign_table'] = [
@@ -70,13 +70,11 @@ class InlineRelationFieldTest extends AbstractFieldTest
                     'maxitems' => 100,
                     'behaviour' => [
                         'enableCascadingDelete' => true,
-                        'localizeChildrenAtParentLocalization' => false,
                     ],
                     'appearance' => [
                         'collapseAll' => 1,
                         'useSortable' => false,
                         'showPossibleLocalizationRecords' => false,
-                        'showRemovedLocalizationRecords' => false,
                         'showAllLocalizationLink' => false,
                         'showSynchronizationLink' => false,
                         'enabledControls' => [

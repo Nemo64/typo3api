@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -77,7 +78,7 @@ class TextareaField extends AbstractField
         });
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         $config = [
             'type' => 'text',

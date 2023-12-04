@@ -26,7 +26,6 @@ class FileFieldTest extends AbstractFieldTest
                     'appearance' => [
                         'collapseAll' => true,
                         'showPossibleLocalizationRecords' => true,
-                        'showRemovedLocalizationRecords' => true,
                         'showAllLocalizationLink' => true,
                         'showSynchronizationLink' => true,
                         'enabledControls' => [
@@ -77,7 +76,7 @@ class FileFieldTest extends AbstractFieldTest
         );
     }
 
-    public function testAllowedFileExt()
+    public function testAllowedFileExt(): void
     {
         $testTable = new TableBuilderContext('stub_table', '1');
 

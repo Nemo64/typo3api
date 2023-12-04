@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Typo3Api\Utility;
 
-
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Countries;
+use Symfony\Component\Intl\Languages;
 
 class IntlItemsProcFunc
 {
-    public function addCountryNames(&$params)
+    public function addCountryNames(&$params): void
     {
-        $countryNames = Intl::getRegionBundle()->getCountryNames('en');
+        $countryNames = Countries::getNames();
         asort($countryNames);
         foreach ($countryNames as $countryCode => $countryName) {
             $params['items'][] = [$countryName, $countryCode];
         }
     }
 
-    public function addLanguages(&$params)
+    public function addLanguages(&$params): void
     {
-        $languageNames = Intl::getLanguageBundle()->getLanguageNames('en');
+        $languageNames = Languages::getNames();
         asort($languageNames);
         foreach ($languageNames as $locale => $languageName) {
             $params['items'][] = [$languageName, $locale];

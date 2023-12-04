@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,11 +27,11 @@ class CheckboxField extends AbstractField
         $resolver->setAllowedTypes('default', 'bool');
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         return [
             'type' => 'check',
-            'default' => $this->getOption('default'),
+            'default' => (int)$this->getOption('default'),
             'items' => [
                 [$this->getOption('checkbox_label'), '']
             ]

@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,25 +31,15 @@ class DateField extends AbstractField
              */
             'useDateTime' => false,
 
-            'dbType' => function (Options $options) {
-                switch ($options['useDateTime'] ? $options['type'] : null) {
-                    case 'date':
-                        return "DATE DEFAULT NULL";
-                    case 'datetime':
-                        return "DATETIME DEFAULT NULL";
-                    default:
-                        return "INT(11) DEFAULT NULL";
-                }
+            'dbType' => fn(Options $options) => match ($options['useDateTime'] ? $options['type'] : null) {
+                'date' => "DATE DEFAULT NULL",
+                'datetime' => "DATETIME DEFAULT NULL",
+                default => "INT(11) DEFAULT NULL",
             },
-            'exposedDbType' => function (Options $options) {
-                switch ($options['useDateTime'] ? $options['type'] : null) {
-                    case 'date':
-                        return "date";
-                    case 'datetime':
-                        return "datetime";
-                    default:
-                        return null;
-                }
+            'exposedDbType' => fn(Options $options) => match ($options['useDateTime'] ? $options['type'] : null) {
+                'date' => "date",
+                'datetime' => "datetime",
+                default => null,
             },
             'localize' => false,
         ]);
@@ -81,7 +72,7 @@ class DateField extends AbstractField
 //        $resolver->setNormalizer('default', $timestampDate);
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         $config = [
             'type' => 'input',

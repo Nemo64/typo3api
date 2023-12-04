@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: marco
@@ -7,7 +9,6 @@
  */
 
 namespace Typo3Api\Tca\Field;
-
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -25,7 +26,7 @@ class ImageField extends FileField
      * pdf is like pandora's box ... with memory leaks, timeouts etc.
      * bmp files tend to be huge ~ you shouldn't accept those
      */
-    const BLACKLISTED_FORMATS = ['svg', 'ai', 'pcx', 'tga', 'pdf', 'bmp'];
+    final public const BLACKLISTED_FORMATS = ['svg', 'ai', 'pcx', 'tga', 'pdf', 'bmp'];
 
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -33,8 +34,8 @@ class ImageField extends FileField
         $resolver->setDefaults([
             'useAsThumbnail' => true,
             'allowedFileExtensions' => array_diff(
-                GeneralUtility::trimExplode(',', strtolower($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'])),
-                ImageField::BLACKLISTED_FORMATS
+                GeneralUtility::trimExplode(',', strtolower((string) $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'])),
+                self::BLACKLISTED_FORMATS
             ),
             'cropVariants' => null,
         ]);
@@ -61,7 +62,7 @@ class ImageField extends FileField
                 foreach ($aspectRatios as $aspectRatio) {
                     if ($aspectRatio === 'NaN') {
                         $allowedAspectRatios['NaN'] = [
-                            'title' => 'LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:imwizard.ratio.free',
+                            'title' => 'LLL:EXT:core/Resources/Private/Language/locallang_wizards.xlf:imwizard.ratio.free',
                             'value' => 0.0
                         ];
                         continue;
@@ -73,8 +74,8 @@ class ImageField extends FileField
                         throw new \RuntimeException($msg);
                     }
 
-                    $x = floatval($parts[0]);
-                    $y = floatval($parts[1]);
+                    $x = (float)$parts[0];
+                    $y = (float)$parts[1];
                     if ($x <= 0 || $y <= 0) {
                         $msg = "Aspect ratio $aspectRatio did not return usable sizes, got $x and $y.";
                         throw new \RuntimeException($msg);
@@ -108,7 +109,7 @@ class ImageField extends FileField
         }
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         $config = parent::getFieldTcaConfig($tcaBuilder);
 

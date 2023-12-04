@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Builder\Context;
+declare(strict_types=1);
 
+namespace Typo3Api\Builder\Context;
 
 interface TcaBuilderContext
 {

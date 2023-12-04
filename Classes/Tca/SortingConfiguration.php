@@ -1,11 +1,11 @@
 <?php
 
-namespace Typo3Api\Tca;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca;
 
 use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\Builder\Context\TcaBuilderContext;
-
 
 class SortingConfiguration implements TcaConfigurationInterface
 {
@@ -40,9 +40,6 @@ class SortingConfiguration implements TcaConfigurationInterface
         return [
             $tableBuilder->getTableName() => [
                 "sorting int(11) DEFAULT '0' NOT NULL",
-
-                // sorting is always local to the pid so putting that in the index might help a lot
-                "INDEX sorting (pid, sorting ASC)",
             ]
         ];
     }

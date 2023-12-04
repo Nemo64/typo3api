@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -23,14 +24,10 @@ class FileField extends AbstractField
             'minitems' => 0,
             'maxitems' => 100,
             'collapseAll' => true,
-            'allowHide' => function (Options $options) {
-                // if you define minitems, you'd expect there to be at least one item.
-                // however: hiding elements will prevent this so i just decided to disable hiding by default then.
-                return $options['minitems'] === 0;
-            },
-            'dbType' => function (Options $options) {
-                return DbFieldDefinition::getIntForNumberRange(0, $options['maxitems']);
-            },
+            'allowHide' => fn(Options $options) => // if you define minitems, you'd expect there to be at least one item.
+// however: hiding elements will prevent this so i just decided to disable hiding by default then.
+$options['minitems'] === 0,
+            'dbType' => fn(Options $options) => DbFieldDefinition::getIntForNumberRange(0, $options['maxitems']),
         ]);
 
         $resolver->setAllowedTypes('allowedFileExtensions', ['string', 'array']);
@@ -45,6 +42,9 @@ class FileField extends AbstractField
                 $fileExtensions = GeneralUtility::trimExplode(',', $fileExtensions);
             }
 
+            /**
+             * @phpstan-ignore-next-line
+             */
             return implode(',', array_filter($fileExtensions, 'strlen'));
         };
         $resolver->setNormalizer('allowedFileExtensions', $normalizeFileExtensions);
@@ -68,7 +68,7 @@ class FileField extends AbstractField
         });
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         return ExtensionManagementUtility::getFileFieldTCAConfig(
             $this->getOption('name'),
@@ -78,7 +78,6 @@ class FileField extends AbstractField
                 'appearance' => [
                     'collapseAll' => $this->getOption('collapseAll'),
                     'showPossibleLocalizationRecords' => $this->getOption('localize'),
-                    'showRemovedLocalizationRecords' => $this->getOption('localize'),
                     'showAllLocalizationLink' => $this->getOption('localize'),
                     'showSynchronizationLink' => $this->getOption('localize'),
                     'enabledControls' => [

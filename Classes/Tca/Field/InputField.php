@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -20,9 +21,7 @@ class InputField extends AbstractField
             // also: the limit of 255 feels random for a normal human
             // that's why i use 50 as a default
             'max' => 50,
-            'size' => function (Options $options) {
-                return $options['max'];
-            },
+            'size' => fn(Options $options) => $options['max'],
             'default' => '',
             'placeholder' => null,
             'required' => false,
@@ -43,15 +42,13 @@ class InputField extends AbstractField
                     throw new InvalidOptionsException($msg);
                 }
 
-                $default = addslashes($options['default']);
+                $default = addslashes((string) $options['default']);
                 return "VARCHAR($maxCharacters) DEFAULT '$default' NOT NULL";
-                // using anything but varchar here would make searchFields slow.
+            // using anything but varchar here would make searchFields slow.
                 // I opted to prevent large input fields and by default add everything to searchFields
                 // also, i can easily use the default option here which is nice.
             },
-            'index' => function (Options $options) {
-                return $options['unique'];
-            },
+            'index' => fn(Options $options) => $options['unique'],
             'useAsLabel' => true,
             'searchField' => true,
         ]);
@@ -79,7 +76,7 @@ class InputField extends AbstractField
         });
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         $config = [
             'type' => 'input',
@@ -103,7 +100,7 @@ class InputField extends AbstractField
     /**
      * @return array
      */
-    protected function getEvals()
+    protected function getEvals(): array
     {
         $evals = [];
 

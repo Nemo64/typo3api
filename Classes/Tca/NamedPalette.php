@@ -1,21 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Typo3Api\Tca;
 
-
 use Typo3Api\Builder\Context\TcaBuilderContext;
-
 
 class NamedPalette extends CompoundTcaConfiguration
 {
     /**
      * @var string
      */
-    private $name;
+    private readonly string $name;
 
     public function __construct(string $name, array $children = [])
     {
-        if (preg_match('/[,;]/', $name)){
+        if (preg_match('/[,;]/', $name)) {
             throw new \RuntimeException("The name of a palette must not contain comma or semicolon, got $name");
         }
 

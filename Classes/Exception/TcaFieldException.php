@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Exception;
+declare(strict_types=1);
 
+namespace Typo3Api\Exception;
 
 use Throwable;
 use Typo3Api\Tca\Field\AbstractField;
@@ -17,7 +18,8 @@ class TcaFieldException extends TcaConfigurationException
 
     public function getField(): AbstractField
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection
+         * @phpstan-ignore-next-line */
         return $this->getConfiguration();
     }
 }

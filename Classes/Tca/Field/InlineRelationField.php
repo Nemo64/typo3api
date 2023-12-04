@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -26,13 +27,9 @@ class InlineRelationField extends AbstractField
             'foreignTakeover' => true,
             'minitems' => 0,
             'maxitems' => 100, // at some point, inline record editing doesn't make sense anymore
-            'collapseAll' => function (Options $options) {
-                return $options['maxitems'] > 5;
-            },
+            'collapseAll' => fn(Options $options) => $options['maxitems'] > 5,
 
-            'dbType' => function (Options $options) {
-                return DbFieldDefinition::getIntForNumberRange(0, $options['maxitems']);
-            },
+            'dbType' => fn(Options $options) => DbFieldDefinition::getIntForNumberRange(0, $options['maxitems']),
         ]);
 
         $resolver->setAllowedTypes('foreign_table', ['string', TableBuilder::class]);
@@ -101,7 +98,7 @@ class InlineRelationField extends AbstractField
         }
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         $foreignTable = $this->getOption('foreign_table');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
@@ -123,22 +120,20 @@ class InlineRelationField extends AbstractField
             'maxitems' => $this->getOption('maxitems'),
             'behaviour' => [
                 'enableCascadingDelete' => $this->getOption('foreignTakeover'),
-                'localizeChildrenAtParentLocalization' => $canLocalize
             ],
             'appearance' => [
                 'collapseAll' => $this->getOption('collapseAll') ? 1 : 0,
                 'useSortable' => $canBeSorted,
                 'showPossibleLocalizationRecords' => $canLocalize,
-                'showRemovedLocalizationRecords' => $canLocalize,
                 'showAllLocalizationLink' => $canLocalize,
                 'showSynchronizationLink' => $canLocalize, // potentially dangerous...
                 'enabledControls' => [
-                    'info' => TRUE,
-                    'new' => TRUE,
+                    'info' => true,
+                    'new' => true,
                     'dragdrop' => $canBeSorted,
                     'sort' => $canBeSorted,
                     'hide' => $canHide,
-                    'delete' => TRUE,
+                    'delete' => true,
                     'localize' => $canLocalize,
                 ],
             ],
@@ -164,7 +159,7 @@ class InlineRelationField extends AbstractField
 
         // define the field on the other side
         // TODO somewhere it should be checked if this field is already defined
-        $foreignField = addslashes($this->getOption('foreign_field'));
+        $foreignField = addslashes((string) $this->getOption('foreign_field'));
         $foreignTable = $this->getOption('foreign_table');
 
         // for self referencing relations the foreign table key might already exist, otherwise create it
@@ -174,6 +169,17 @@ class InlineRelationField extends AbstractField
 
         $tableDefinitions[$foreignTable][] = "`$foreignField` INT(11) DEFAULT '0' NOT NULL";
         $tableDefinitions[$foreignTable][] = "KEY `$foreignField`(`$foreignField`)";
+
+        $foreignTable = $this->getOption('foreign_table');
+        $foreignTableDefinition = $GLOBALS['TCA'][$foreignTable];
+        if(@$foreignTableDefinition['ctrl']['sortby'] !== null) {
+            // sorting is always local to the pid so putting that in the index might help a lot
+            $tableDefinitions[$foreignTable][] = "INDEX sorting (pid, {$foreignTableDefinition['ctrl']['sortby']})";
+        }
+        if(@$foreignTableDefinition['ctrl']['_sortby'] !== null) {
+            // sorting is always local to the pid so putting that in the index might help a lot
+            $tableDefinitions[$foreignTable][] = "INDEX sorting_alt (pid, {$foreignTableDefinition['ctrl']['_sortby']})";
+        }
 
         return $tableDefinitions;
     }

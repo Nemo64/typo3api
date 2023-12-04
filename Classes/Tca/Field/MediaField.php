@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -17,21 +18,21 @@ class MediaField extends FileField
      *
      * @see \Typo3Api\Tca\Field\ImageField::BLACKLISTED_FORMATS
      */
-    const BLACKLISTED_FORMATS = ['wav', 'ogg', 'flac', 'opus', 'webm'];
+    final public const BLACKLISTED_FORMATS = ['wav', 'ogg', 'flac', 'opus', 'webm'];
 
     protected function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'allowedFileExtensions' => array_diff(
-                GeneralUtility::trimExplode(',', strtolower($GLOBALS['TYPO3_CONF_VARS']['SYS']['mediafile_ext'])),
+                GeneralUtility::trimExplode(',', strtolower((string) $GLOBALS['TYPO3_CONF_VARS']['SYS']['mediafile_ext'])),
                 ImageField::BLACKLISTED_FORMATS,
-                MediaField::BLACKLISTED_FORMATS
+                self::BLACKLISTED_FORMATS
             ),
         ]);
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         $config = parent::getFieldTcaConfig($tcaBuilder);
 

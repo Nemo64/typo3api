@@ -22,12 +22,11 @@ trait PreparationForTypo3
         error_reporting(self::$errorLevelBeforeClass);
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         // load tt_content tca because it is used as a reference in many configurations
-        $old = error_reporting(0);
+        $GLOBALS['TYPO3_CONF_VARS'] = require __DIR__ . '/../web/typo3/sysext/core/Configuration/DefaultConfiguration.php';
         $tca = require __DIR__ . '/../web/typo3/sysext/frontend/Configuration/TCA/tt_content.php';
-        error_reporting($old);
         if (is_array($tca)) {
             $GLOBALS['TCA']['tt_content'] = $tca;
         }

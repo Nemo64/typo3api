@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -9,7 +10,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\Builder\Context\TcaBuilderContext;
 use Typo3Api\Utility\ForeignTableUtility;
-
 
 class SelectRelationField extends AbstractField
 {
@@ -42,9 +42,7 @@ class SelectRelationField extends AbstractField
             return $foreignTable;
         });
 
-        $resolver->setNormalizer('foreign_table_where', function (Options $options, string $where) {
-            return ForeignTableUtility::normalizeForeignTableWhere($options['foreign_table'], $where);
-        });
+        $resolver->setNormalizer('foreign_table_where', fn(Options $options, string $where) => ForeignTableUtility::normalizeForeignTableWhere($options['foreign_table'], $where));
 
         $resolver->setNormalizer('items', function (Options $options, array $items) {
             // ensure at least one value, or an empty value if not required
@@ -64,7 +62,7 @@ class SelectRelationField extends AbstractField
         });
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
         return [
             'type' => 'select',

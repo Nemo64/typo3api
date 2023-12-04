@@ -1,11 +1,11 @@
 <?php
 
-namespace Typo3Api\Tca;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca;
 
 use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\Builder\Context\TcaBuilderContext;
-
 
 /**
  * Class CacheTagConfiguration
@@ -15,20 +15,8 @@ use Typo3Api\Builder\Context\TcaBuilderContext;
  */
 class CacheTagConfiguration implements TcaConfigurationInterface
 {
-    /**
-     * @var string
-     */
-    private $tag;
-
-    /**
-     * @var string
-     */
-    private $group;
-
-    public function __construct(string $tag, string $group = 'pages')
+    public function __construct(private string $tag, private string $group = 'pages')
     {
-        $this->tag = $tag;
-        $this->group = $group;
     }
 
     public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)

@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca;
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,7 +11,7 @@ use Typo3Api\Builder\Context\TcaBuilderContext;
 
 class ContentElementConfiguration implements TcaConfigurationInterface
 {
-    const ICONS = [
+    final public const ICONS = [
         'content-accordion',
         'content-audio',
         'content-bullets',
@@ -49,35 +50,24 @@ class ContentElementConfiguration implements TcaConfigurationInterface
         'content-textpic',
     ];
 
-    const HEADLINE = [
+    final public const HEADLINE = [
         'normal' => '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.headers;headers',
         'no_sub' => '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.header;header',
         'hidden' => 'header;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header.ALT.html_formlabel',
     ];
-
-    /**
-     * @var array
-     */
-    private $options;
     /**
      * @var OptionsResolver
      */
-    private $optionsResolver;
+    private readonly OptionsResolver $optionsResolver;
 
-    public function __construct(array $options = [])
+    public function __construct(private readonly array $options = [])
     {
-        $this->options = $options;
-
         $this->optionsResolver = new OptionsResolver();
         $this->optionsResolver->setDefaults([
-            'name' => function (Options $options) {
-                return ucfirst(strtr($options['typeName'], '_', ' '));
-            },
-            'description' => function (Options $options) {
-                return $options['typeName'];
-            },
+            'name' => fn(Options $options) => ucfirst(strtr($options['typeName'], '_', ' ')),
+            'description' => fn(Options $options) => $options['typeName'],
             'icon' => function (Options $options) {
-                $icons = array_map(function ($icon) use ($options) {
+                $icons = array_map(static function ($icon) use ($options) {
                     $name = basename($icon, '.svg');
                     return [
                         'diff' => levenshtein($options['typeName'], strtok($name, 'content-')),
@@ -106,7 +96,7 @@ class ContentElementConfiguration implements TcaConfigurationInterface
     protected function testContext(TcaBuilderContext $context): TableBuilderContext
     {
         if (!$context instanceof TableBuilderContext) {
-            $type = is_object($context) ? get_class($context) : gettype($context);
+            $type = get_debug_type($context);
             throw new \RuntimeException("Expected " . TableBuilderContext::class . ", got $type");
         }
 

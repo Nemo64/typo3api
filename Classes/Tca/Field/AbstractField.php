@@ -1,7 +1,8 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+declare(strict_types=1);
 
+namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
@@ -22,14 +23,12 @@ abstract class AbstractField implements TcaConfigurationInterface
      * A cache for option resolvers to speed up duplicate usage.
      * @var array
      */
-    private static $optionResolvers = [];
+    private static array $optionResolvers = [];
 
     /**
      * CommonField constructor.
-     * @param string $name
-     * @param array $options
      */
-    public final function __construct(string $name, array $options = [])
+    final public function __construct(string $name, array $options = [])
     {
         // Nicer creation syntax when passing name as a direct parameter instead of expecting an option.
         // However: the name must be an option so that it is available during option resolving.
@@ -40,19 +39,19 @@ abstract class AbstractField implements TcaConfigurationInterface
             $this->options = $optionResolver->resolve($options);
         } catch (InvalidOptionsException $e) {
             $this->options = ['name' => $name]; // make getName work for the exception
-            throw new TcaFieldException($this, $e->getMessage(), 1508678194, $e);
+            throw new TcaFieldException($this, $e->getMessage(), 1_508_678_194, $e);
         }
     }
 
     private function getOptionResolver()
     {
-        if (isset(self::$optionResolvers[get_class($this)])) {
-            return self::$optionResolvers[get_class($this)];
+        if (isset(self::$optionResolvers[static::class])) {
+            return self::$optionResolvers[static::class];
         }
 
         $optionResolver = new OptionsResolver();
         $this->configureOptions($optionResolver);
-        self::$optionResolvers[get_class($this)] = $optionResolver;
+        self::$optionResolvers[static::class] = $optionResolver;
         return $optionResolver;
     }
 
@@ -64,9 +63,10 @@ abstract class AbstractField implements TcaConfigurationInterface
         ]);
         $resolver->setDefaults([
             'label' => function (Options $options) {
-                $splitName = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $options['name']);
-                return ucfirst(trim(strtolower($splitName)));
+                $splitName = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], (string) $options['name']);
+                return ucfirst(strtolower(trim($splitName)));
             },
+            'description' => '',
             'exclude' => false,
             'localize' => true,
             'displayCond' => null,
@@ -78,6 +78,7 @@ abstract class AbstractField implements TcaConfigurationInterface
 
         $resolver->setAllowedTypes('name', 'string');
         $resolver->setAllowedTypes('label', 'string');
+        $resolver->setAllowedTypes('description', 'string');
         $resolver->setAllowedTypes('exclude', 'bool');
         $resolver->setAllowedTypes('dbType', 'string');
         $resolver->setAllowedTypes('localize', 'bool');
@@ -89,7 +90,6 @@ abstract class AbstractField implements TcaConfigurationInterface
 
         /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('name', function (Options $options, $name) {
-
             if (strlen($name) > 64) {
                 $msg = "The field name should be at most 64 characters long. (and even that... are you insane?)";
                 throw new InvalidOptionsException($msg);
@@ -134,7 +134,7 @@ abstract class AbstractField implements TcaConfigurationInterface
             } else {
                 if (!isset($ctrl['label_alt'])) {
                     $ctrl['label_alt'] = $fieldName;
-                } else if (strpos($ctrl['label_alt'], $fieldName) === false) {
+                } elseif (!str_contains((string) $ctrl['label_alt'], (string) $fieldName)) {
                     $ctrl['label_alt'] .= ', ' . $fieldName;
                 }
             }
@@ -143,7 +143,7 @@ abstract class AbstractField implements TcaConfigurationInterface
         if ($this->getOption('searchField')) {
             if (!isset($ctrl['searchFields'])) {
                 $ctrl['searchFields'] = $fieldName;
-            } else if (strpos($ctrl['searchFields'], $fieldName) === false) {
+            } elseif (!str_contains((string) $ctrl['searchFields'], (string) $fieldName)) {
                 $ctrl['searchFields'] .= ', ' . $fieldName;
             }
         }
@@ -166,6 +166,10 @@ abstract class AbstractField implements TcaConfigurationInterface
             'label' => $this->getOption('label'),
             'config' => $this->getFieldTcaConfig($tcaBuilder),
         ];
+
+        if ($this->getOption('description')) {
+            $column['description'] = $this->getOption('description');
+        }
 
         if ($this->getOption('exclude')) {
             $column['exclude'] = true;
@@ -194,7 +198,7 @@ abstract class AbstractField implements TcaConfigurationInterface
 
     public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
-        $name = addslashes($this->getOption('name'));
+        $name = addslashes((string) $this->getOption('name'));
         $definition = [$tableBuilder->getTableName() => ["`$name` " . $this->getOption('dbType')]];
 
         if ($this->getOption('index')) {
