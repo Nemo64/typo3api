@@ -29,7 +29,8 @@ class SelectFieldTest extends AbstractFieldTest
                     'renderType' => 'selectSingle',
                     'items' => [
                         ['', '']
-                    ]
+                    ],
+                    'default' => '',
                 ],
                 'l10n_mode' => 'exclude',
                 'l10n_display' => 'defaultAsReadonly',
@@ -99,7 +100,8 @@ class SelectFieldTest extends AbstractFieldTest
                 'itemsProcFunc' => 'some-func',
                 'items' => [['', '']],
                 'type' => 'select',
-                'renderType' => 'selectSingle'
+                'renderType' => 'selectSingle',
+                'default' => $field->getOption('default'),
             ],
             $field->getFieldTcaConfig($stubTable)
         );

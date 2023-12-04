@@ -47,7 +47,8 @@ class ImageFieldTest extends FileFieldTest
                         'showAllLocalizationLink' => true,
                         'showSynchronizationLink' => true,
                         'enabledControls' => [
-                            'localize' => true
+                            'localize' => true,
+                            'hide' => true,
                         ],
                     ],
                     'overrideChildTca' => [
@@ -90,11 +91,6 @@ class ImageFieldTest extends FileFieldTest
 
 
         $actualColumns = $field->getColumns($stubTable);
-
-        // typo3 8 has labels in the palette ~ remove that to make the test compatible
-        array_walk_recursive($actualColumns, function (&$value) {
-            $value = preg_replace('/--palette--;LLL[^;]+;/', '--palette--;;', $value);
-        });
 
         $this->assertEquals($expectedColumns, $actualColumns);
     }
