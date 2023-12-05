@@ -104,15 +104,11 @@ class SelectField extends AbstractField
         $values = [];
 
         foreach ($items as $item) {
-            if (!isset($item[1])) {
+            if (!isset($item['value'])) {
                 continue;
             }
 
-            if ($item[1] === '--div--') {
-                continue;
-            }
-
-            $values[] = $item[1];
+            $values[] = $item['value'];
         }
 
         if (empty($values)) {
