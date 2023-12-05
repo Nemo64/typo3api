@@ -31,8 +31,6 @@ class SelectField extends AbstractField
             }, $options['values']),
             'itemsProcFunc' => null,
 
-            'required' => true, // TODO i somehow want this to be false now since having an empty option is nice
-
             'dbType' => function (Options $options) {
                 $possibleValues = self::getValuesFromItems($options['items']);
                 $defaultValue = addslashes((string) reset($possibleValues));
@@ -79,6 +77,22 @@ class SelectField extends AbstractField
                     throw new InvalidOptionsException("The value in an select must not contain the chars '|,;'.");
                 }
             }
+
+            // Migrate from ['<label>', '<value>'] syntax to new ['label' => <label>, 'value' => <value>]
+            $items = array_map(function ($item) {
+                if (isset($item['label']) && isset($item['value'])) {
+                    return $item;
+                }
+
+                $label = $item[0];
+                $value = $item[1];
+
+                return [
+                    'label' => $label,
+                    'value' => $value,
+                ];
+            }, $items);
+
 
             return $items;
         });
