@@ -66,14 +66,15 @@ class SelectField extends AbstractField
 
         $resolver->setNormalizer('items', function (Options $options, $items) {
             // ensure at least one value, or an empty value if not required
-            if (empty($items) || ($options['required'] === false && $items[0][1] !== '')) {
+            if (empty($items) || ($options['required'] === false && ($items[0][1] ?? null !== '' || $items[0]['value'] ?? null !== ''))) {
                 array_unshift($items, ['', '']);
             }
 
             foreach ($items as $value) {
+                $dbValue = $value[1] ?? $value['value'];
                 // the documentation says these chars are invalid
                 // https://docs.typo3.org/typo3cms/TCAReference/ColumnsConfig/Type/Select.html#items
-                if (preg_match('/[|,;]/', (string) $value[1])) {
+                if (preg_match('/[|,;]/', (string) $dbValue)) {
                     throw new InvalidOptionsException("The value in an select must not contain the chars '|,;'.");
                 }
             }
