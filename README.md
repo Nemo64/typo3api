@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/Nemo64/typo3api.svg?branch=master)](https://travis-ci.org/Nemo64/typo3api)
 [![Latest Stable Version](https://poser.pugx.org/nemo64/typo3api/v/stable)](https://packagist.org/packages/nemo64/typo3api)
 [![Total Downloads](https://poser.pugx.org/nemo64/typo3api/downloads)](https://packagist.org/packages/nemo64/typo3api)
 [![Monthly Downloads](https://poser.pugx.org/nemo64/typo3api/d/monthly)](https://packagist.org/packages/nemo64/typo3api)

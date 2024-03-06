@@ -24,6 +24,14 @@ class ContentElementWizardHook implements NewContentElementWizardHookInterface
 
         foreach ($GLOBALS['TCA']['tt_content']['ctrl']['EXT']['typo3api']['content_elements'] as $section => $contentElements) {
             $sectionIndex = array_search($section, $keys);
+
+            // create a new tab if it did not exist before
+            if ($sectionIndex === false) {
+                $sectionIndex = count($keys);
+                $keys[$sectionIndex] = $section;
+                $values[$sectionIndex] = ['header' => $section];
+            }
+
             array_splice($values, $sectionIndex + 1, 0, $contentElements);
             array_splice($keys, $sectionIndex + 1, 0, array_map(function ($contentElement) use($section) {
                 return $section . '_' . $contentElement['CType'];

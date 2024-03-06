@@ -9,14 +9,14 @@ class AbstractFieldTest extends TestCase
 {
     const STUB_DB_TYPE = "VARCHAR(32) DEFAULT '' NOT NULL";
 
-    protected function setUp()
+    protected function setUp(): void
     {
         if (isset($GLOBALS['TCA'])) {
             unset($GLOBALS['TCA']);
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if (isset($GLOBALS['TCA'])) {
             unset($GLOBALS['TCA']);
@@ -125,12 +125,12 @@ class AbstractFieldTest extends TestCase
     }
 
     /**
-     * @expectedException \Typo3Api\Exception\TcaFieldException
      * @dataProvider invalidNameProvider
      * @param mixed $name
      */
     public function testInvalidName($name)
     {
+        $this->expectException(\Typo3Api\Exception\TcaFieldException::class);
         $this->createFieldInstance($name);
     }
 

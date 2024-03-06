@@ -15,6 +15,10 @@ class CacheTagHook
      */
     public function clearCachePostProcess(array $params)
     {
+        if (!isset($params['table'])) {
+            return;
+        }
+        
         if (!isset($GLOBALS['TCA'][$params['table']]['ctrl']['EXT']['typo3api']['cache_tags'])) {
             return;
         }

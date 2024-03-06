@@ -34,7 +34,7 @@ class ImageFieldTest extends FileFieldTest
     {
         $stubTable = new TableBuilderContext('stub_table', '1');
 
-        $this->assertEquals([
+        $expectedColumns = [
             $field->getName() => [
                 'label' => $field->getOption('label'),
                 'config' => ExtensionManagementUtility::getFileFieldTCAConfig($field->getName(), [
@@ -55,39 +55,49 @@ class ImageFieldTest extends FileFieldTest
                         'types' => [
                             '0' => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                --palette--;;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             File::FILETYPE_TEXT => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                --palette--;;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             File::FILETYPE_IMAGE => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                --palette--;;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             File::FILETYPE_AUDIO => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.audioOverlayPalette;audioOverlayPalette,
+                                --palette--;;audioOverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             File::FILETYPE_VIDEO => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.videoOverlayPalette;videoOverlayPalette,
+                                --palette--;;videoOverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             File::FILETYPE_APPLICATION => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                --palette--;;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ]
                         ]
                     ]
                 ], 'gif,jpg,jpeg,tif,tiff,png')
             ]
-        ], $field->getColumns($stubTable));
+        ];
+
+
+        $actualColumns = $field->getColumns($stubTable);
+
+        // typo3 8 has labels in the palette ~ remove that to make the test compatible
+        array_walk_recursive($actualColumns, function (&$value) {
+            $value = preg_replace('/--palette--;LLL[^;]+;/', '--palette--;;', $value);
+        });
+
+        $this->assertEquals($expectedColumns, $actualColumns);
     }
 
     /**
