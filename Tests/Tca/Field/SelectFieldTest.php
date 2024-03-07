@@ -28,7 +28,7 @@ class SelectFieldTest extends AbstractFieldTest
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        ['', '']
+                        ['label' => '', 'value' => '']
                     ],
                     'default' => '',
                 ],
@@ -43,18 +43,19 @@ class SelectFieldTest extends AbstractFieldTest
         $stubTable = new TableBuilderContext('stub_table', '1');
 
         $items = [
-            ['label', 'value'],
-            ['divider', '--div--'],
-            ['label2', 'value2'],
+            ['label' => 'label', 'value' =>  'value'],
+            ['label' => 'divider', 'value' =>  '--div--'],
+            ['label' => 'label2', 'value' =>  'value2'],
         ];
         $field = $this->createFieldInstance('some_field', [
             'items' => $items
         ]);
 
         $this->assertEquals([
-            ['label', 'value'],
-            ['divider', '--div--'],
-            ['label2', 'value2'],
+            ['label' => '', 'value' => ''],
+            ['label' => 'label', 'value' => 'value'],
+            ['label' => 'divider', 'value' => '--div--'],
+            ['label' => 'label2', 'value' => 'value2'],
         ], $field->getColumns($stubTable)['some_field']['config']['items']);
     }
 
@@ -67,8 +68,9 @@ class SelectFieldTest extends AbstractFieldTest
         ]);
 
         $this->assertEquals([
-            ['Value', 'value'],
-            ['Value2', 'value2'],
+            ['label' => '', 'value' => ''],
+            ['label' => 'Value', 'value' => 'value'],
+            ['label' => 'Value2', 'value' => 'value2'],
         ], $field->getColumns($stubTable)['some_field']['config']['items']);
     }
 
@@ -78,13 +80,12 @@ class SelectFieldTest extends AbstractFieldTest
 
         $field = $this->createFieldInstance('some_field', [
             'values' => ['value', 'value2'],
-            'required' => false
+            'required' => true
         ]);
 
         $this->assertEquals([
-            ['', ''],
-            ['Value', 'value'],
-            ['Value2', 'value2'],
+            ['label' => 'Value', 'value' => 'value'],
+            ['label' => 'Value2', 'value' => 'value2'],
         ], $field->getColumns($stubTable)['some_field']['config']['items']);
     }
 
@@ -98,7 +99,7 @@ class SelectFieldTest extends AbstractFieldTest
         $this->assertEquals(
             [
                 'itemsProcFunc' => 'some-func',
-                'items' => [['', '']],
+                'items' => [['label' => '', 'value' => '']],
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'default' => $field->getOption('default'),
