@@ -10,6 +10,11 @@ jobs:
         php: [8.2, 8.1, 8.0]
     steps:
       - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: intl
       - uses: php-actions/composer@v6
         with:
           command: require typo3/cms-core:^12
