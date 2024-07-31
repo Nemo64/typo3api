@@ -30,7 +30,7 @@
 		"php": "^8.0",
 		"ext-intl": "*",
 		"symfony/intl": "^5 || ^6",
-		"symfony/options-resolver": "^5 || ^6",
+		"symfony/options-resolver": "^5 || ^6 || ^7",
 		"symfony/polyfill-mbstring": "^1",
 		"symfony/polyfill-php80": "^1.23.0",
 		"typo3/cms-backend": "^11.5 || ^12.4",
