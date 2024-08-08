@@ -33,12 +33,7 @@ class SelectField extends AbstractField
 
             'dbType' => function (Options $options) {
                 $possibleValues = self::getValuesFromItems($options['items']);
-
-                if ($options['default'] && !in_array($options['default'], $possibleValues, true)) {
-                    throw new InvalidOptionsException("The default value must be one of the possible values.");
-                }
-
-                $defaultValue = addslashes((string) ($options['default'] ?? reset($possibleValues)));
+                $defaultValue = addslashes((string) reset($possibleValues));
 
                 $minimumChars = $options['itemsProcFunc'] ? 30 : 1;
                 $maxChars = max($minimumChars, ...array_map('mb_strlen', $possibleValues));
@@ -92,11 +87,18 @@ class SelectField extends AbstractField
 
                 $label = $item[0];
                 $value = $item[1];
+                $icon = $item[2] ?? '';
 
-                return [
+                $returnValue = [
                     'label' => $label,
                     'value' => $value,
                 ];
+
+                if ($icon) {
+                    $returnValue['icon'] = $icon;
+                }
+
+                return $returnValue;
             }, $items);
 
 
