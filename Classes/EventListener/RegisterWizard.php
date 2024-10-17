@@ -8,10 +8,21 @@ use TYPO3\CMS\Core\Configuration\Event\ModifyLoadedPageTsConfigEvent;
 
 class RegisterWizard
 {
+    private const DISABLE_TYPO3_API_NEEDLE = '###DISABLE_TYPO3_API###';
+
     public function __invoke(ModifyLoadedPageTsConfigEvent $event): void
     {
         if (!isset($GLOBALS['TCA']['tt_content']['ctrl']['EXT']['typo3api']['content_elements'])) {
             return;
+        }
+
+        $tsConfig = $event->getTsConfig();
+
+        foreach ($tsConfig as $key => $value) {
+            $disableTypo3APi = str_contains($value, self::DISABLE_TYPO3_API_NEEDLE);
+            if ($disableTypo3APi) {
+                return;
+            }
         }
 
         foreach ($GLOBALS['TCA']['tt_content']['ctrl']['EXT']['typo3api']['content_elements'] as $section => $contentElements) {
