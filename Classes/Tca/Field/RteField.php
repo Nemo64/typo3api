@@ -23,7 +23,7 @@ class RteField extends AbstractField
 
     public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
-        return [
+        $tcaConfig = [
             'type' => 'text',
 
             // rows and cols are ignored anyways unless rte is ignored
@@ -32,7 +32,12 @@ class RteField extends AbstractField
 
             'softref' => 'typolink_tag,images,email[subst],url',
             'enableRichtext' => true,
-            'richtextConfiguration' => $this->getOption('richtextConfiguration')
         ];
+
+        if ($this->getOption('richtextConfiguration')) {
+            $tcaConfig['richtextConfiguration'] = $this->getOption('richtextConfiguration');
+        }
+
+        return $tcaConfig;
     }
 }
