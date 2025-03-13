@@ -46,7 +46,7 @@ class SelectField extends AbstractField
                     $msg = "The value in an select shouldn't be longer than 191 characters.";
                     $msg .= " The longest value has $maxChars characters.";
                     $msg .= " If you absolutely need to save longer values, define the dbType manually.";
-                    throw new InvalidOptionsException($msg);
+                    throw new InvalidOptionsException($msg, 2439700530);
                 }
 
                 return "VARCHAR($maxChars) DEFAULT '$defaultValue' NOT NULL";
@@ -75,7 +75,7 @@ class SelectField extends AbstractField
                 // the documentation says these chars are invalid
                 // https://docs.typo3.org/typo3cms/TCAReference/ColumnsConfig/Type/Select.html#items
                 if (preg_match('/[|,;]/', (string) $dbValue)) {
-                    throw new InvalidOptionsException("The value in an select must not contain the chars '|,;'.");
+                    throw new InvalidOptionsException("The value in an select must not contain the chars '|,;'.", 1772698557);
                 }
             }
 

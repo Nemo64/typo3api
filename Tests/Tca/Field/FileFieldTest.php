@@ -20,7 +20,8 @@ class FileFieldTest extends AbstractFieldTest
         $this->assertEquals([
             $field->getName() => [
                 'label' => $field->getOption('label'),
-                'config' => ExtensionManagementUtility::getFileFieldTCAConfig($field->getName(), [
+                'config' => [
+                    'type' => 'file',
                     'minitems' => 0,
                     'maxitems' => 100,
                     'appearance' => [
@@ -33,7 +34,7 @@ class FileFieldTest extends AbstractFieldTest
                             'hide' => true,
                         ],
                     ],
-                ]),
+                ],
             ],
         ], $field->getColumns($stubTable));
     }
@@ -57,7 +58,7 @@ class FileFieldTest extends AbstractFieldTest
      *
      * @param string $fieldName
      */
-    public function testIndex(string $fieldName)
+    public function testIndex(string $fieldName): void
     {
         $stubTable = new TableBuilderContext('stub_table', '1');
         $field = $this->createFieldInstance($fieldName, ['index' => true]);
@@ -81,10 +82,10 @@ class FileFieldTest extends AbstractFieldTest
     {
         $testTable = new TableBuilderContext('stub_table', '1');
 
-        $field = $this->createFieldInstance('field', ['allowedFileExtensions' => 'jpg, png']);
-        $this->assertEquals('jpg,png', $field->getColumns($testTable)['field']['config']['allowed']);
+        $field = $this->createFieldInstance('field', ['allowedFileExtensions' => 'jpg,png']);
+        $this->assertEquals(['jpg', 'png'], $field->getColumns($testTable)['field']['config']['allowed']);
 
         $field = $this->createFieldInstance('field', ['allowedFileExtensions' => ['jpg', 'png']]);
-        $this->assertEquals('jpg,png', $field->getColumns($testTable)['field']['config']['allowed']);
+        $this->assertEquals(['jpg', 'png'], $field->getColumns($testTable)['field']['config']['allowed']);
     }
 }

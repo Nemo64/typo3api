@@ -38,7 +38,7 @@ class InputField extends AbstractField
                     $msg .= " Use a textarea for saving that many characters.";
                     $msg .= " If you must use an input field for some reason:";
                     $msg .= " define the dbType option with a fitting db type option like TEXT.";
-                    throw new InvalidOptionsException($msg);
+                    throw new InvalidOptionsException($msg, 9518287442);
                 }
 
                 $default = addslashes((string) $options['default']);
@@ -67,7 +67,7 @@ class InputField extends AbstractField
         $resolver->setNormalizer('max', function (Options $options, $maxLength) {
             if ($maxLength < 1) {
                 $msg = "Max size of input can't be smaller than 1, got $maxLength";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 6415623515);
             }
 
             return $maxLength;

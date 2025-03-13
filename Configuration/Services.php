@@ -1,10 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
+use TYPO3\CMS\Core\TypoScript\IncludeTree\Event\ModifyLoadedPageTsConfigEvent;
 use Typo3Api\EventListener\SqlSchemaListener;
 use TYPO3\CMS\Core\Database\Event\AlterTableDefinitionStatementsEvent;
 use Typo3Api\EventListener\RegisterWizard;
-use TYPO3\CMS\Core\Configuration\Event\ModifyLoadedPageTsConfigEvent;
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 

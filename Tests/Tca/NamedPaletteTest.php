@@ -12,7 +12,7 @@ class NamedPaletteTest extends CompoundTcaConfigurationTest
         return new NamedPalette('Named palette', $instances);
     }
 
-    public function testAddingTwoFields()
+    public function testAddingTwoFields(): void
     {
         parent::testAddingTwoFields();
         $this->assertEquals(
@@ -25,7 +25,7 @@ class NamedPaletteTest extends CompoundTcaConfigurationTest
         );
     }
 
-    public function testMergeTwoFields()
+    public function testMergeTwoFields(): void
     {
         parent::testMergeTwoFields();
         $this->assertEquals(

@@ -9,7 +9,7 @@ use Typo3Api\Tca\Field\AbstractField;
 
 class TcaFieldException extends TcaConfigurationException
 {
-    public function __construct(AbstractField $field, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(AbstractField $field, $message = "", $code = 0, ?Throwable $previous = null)
     {
         $name = $field->getName();
         $message = "Error in field '$name': $message";

@@ -137,7 +137,7 @@ class TableBuilder implements TcaBuilderInterface
         if (!isset($tca['types'][$type])) {
             $msg = "The Type $type isn't defined so it can't be inherited from it.";
             $msg .= " Possible types are: " . implode(', ', array_keys($tca['types']));
-            throw new \RuntimeException($msg);
+            throw new \RuntimeException($msg, 9216629329);
         }
 
         // TODO maybe not overwrite existing configuration?
@@ -168,7 +168,7 @@ class TableBuilder implements TcaBuilderInterface
         $search = '/--div--\s*;\s*' . preg_quote($otherTab, '/') . '.*?(?=,\s?--div--|$)/Us';
         $type['showitem'] = preg_replace($search, $newTab . ', \0', (string) $type['showitem'], 1, $matches);
         if ($matches === 0) {
-            throw new \RuntimeException("The tab '$otherTab' seems to not exist.");
+            throw new \RuntimeException("The tab '$otherTab' seems to not exist.", 7201487165);
         }
 
         return $this;
@@ -235,7 +235,7 @@ class TableBuilder implements TcaBuilderInterface
                 if ($paletteDefinition !== $tca['palettes'][$paletteName]) {
                     $msg = "The palette $paletteName is already defined in {$this->context} but isn't compatible.";
                     $msg .= " If you can rename the palette than that would be an easy fix for the problem.";
-                    throw new \RuntimeException($msg);
+                    throw new \RuntimeException($msg, 5007619290);
                 }
 
                 continue;
@@ -273,7 +273,7 @@ class TableBuilder implements TcaBuilderInterface
                 $msg .= "This means the definitions would need to be merged.\n";
                 $msg .= "This is currently not implemented because of all the special cases like relations that would need to be handled.\n";
                 $msg .= "Therefor partial configuration of a child type is currently not possible.";
-                throw new \RuntimeException($msg);
+                throw new \RuntimeException($msg, 3152640145);
             } else {
                 // all columns are already defined so define overrides, just in case something changed.
                 foreach ($columns as $columnName => $columnDefinition) {
@@ -294,7 +294,7 @@ class TableBuilder implements TcaBuilderInterface
                         $msg .= " Tried to change the type in type $typeName with $newColumnType.";
                         $msg .= " It is not possible to change the field type in different render types.";
                         $msg .= " Use another field name or use another table entirely.";
-                        throw new \RuntimeException($msg);
+                        throw new \RuntimeException($msg, 1726001165);
                     }
 
                     $tca['types'][$this->getTypeName()]['columnsOverrides'][$columnName] = $columnDefinition;

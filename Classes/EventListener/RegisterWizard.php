@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Typo3Api\EventListener;
 
-use TYPO3\CMS\Core\Configuration\Event\ModifyLoadedPageTsConfigEvent;
+use TYPO3\CMS\Core\TypoScript\IncludeTree\Event\ModifyLoadedPageTsConfigEvent;
 
 class RegisterWizard
 {

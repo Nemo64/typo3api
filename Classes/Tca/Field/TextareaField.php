@@ -57,7 +57,7 @@ class TextareaField extends AbstractField
                 $msg .= " This can't be stored in a MEDIUMTEXT and LONGTEXT might get to big for a php process.";
                 $msg .= " Even if you increase the memory limit, the translation system of typo3 uses MEDIUMTEXT too.";
                 $msg .= " Try to use a sensible character limit or store your data in a file if possible.";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 7977892303);
             },
         ]);
 
@@ -72,7 +72,7 @@ class TextareaField extends AbstractField
         $resolver->setNormalizer('max', function (Options $options, $maxLength) {
             if ($maxLength < 1) {
                 $msg = "Max size of input can't be smaller than 1, got $maxLength";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 4692819178);
             }
             return $maxLength;
         });

@@ -33,10 +33,7 @@ class ImageField extends FileField
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'useAsThumbnail' => true,
-            'allowedFileExtensions' => array_diff(
-                GeneralUtility::trimExplode(',', strtolower((string) $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'])),
-                self::BLACKLISTED_FORMATS
-            ),
+            'allowedFileExtensions' => ['common-image-types'],
             'cropVariants' => null,
         ]);
 
@@ -49,7 +46,7 @@ class ImageField extends FileField
             }
 
             if (!isset($cropVariants['default'])) {
-                throw new \LogicException("You'll want to define a 'default' crop variant or else the editor will break.");
+                throw new \LogicException("You'll want to define a 'default' crop variant or else the editor will break.", 1273369902);
             }
 
             $parsedCropVariants = [];
@@ -71,14 +68,14 @@ class ImageField extends FileField
                     $parts = GeneralUtility::trimExplode(':', $aspectRatio, true);
                     if (count($parts) !== 2) {
                         $msg = "Aspect ratio $aspectRatio could not be parsed. Expected something like 16:9.";
-                        throw new \RuntimeException($msg);
+                        throw new \RuntimeException($msg, 4729713717);
                     }
 
                     $x = (float)$parts[0];
                     $y = (float)$parts[1];
                     if ($x <= 0 || $y <= 0) {
                         $msg = "Aspect ratio $aspectRatio did not return usable sizes, got $x and $y.";
-                        throw new \RuntimeException($msg);
+                        throw new \RuntimeException($msg, 3503847684);
                     }
 
                     $allowedAspectRatios[$aspectRatio] = [
@@ -97,7 +94,7 @@ class ImageField extends FileField
         });
     }
 
-    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder): void
     {
         parent::modifyCtrl($ctrl, $tcaBuilder);
 
@@ -118,7 +115,7 @@ class ImageField extends FileField
         $config['overrideChildTca']['types'] = $GLOBALS['TCA']['tt_content']['columns']['image']['config']['overrideChildTca']['types'];
         $config['appearance'] = array_merge(
             $GLOBALS['TCA']['tt_content']['columns']['image']['config']['appearance'],
-            $config['appearance']
+            $config['appearance'] ?? []
         );
 
         $cropVariants = $this->getOption('cropVariants');

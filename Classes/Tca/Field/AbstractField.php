@@ -94,22 +94,22 @@ abstract class AbstractField implements TcaConfigurationInterface
         $resolver->setNormalizer('name', function (Options $options, $name) {
             if (strlen($name) > 64) {
                 $msg = "The field name should be at most 64 characters long. (and even that... are you insane?)";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 9895087401);
             }
 
             if (strlen($name) <= 0) {
                 $msg = "The field name must not be empty";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 2845494578);
             }
 
             if (strtolower($name) !== $name) {
                 $msg = "The field name must be lower case.";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 4924430723);
             }
 
             if (!preg_match('#^\w*$#', $name)) {
                 $msg = "The field name should only contain word characters to avoid potential problems.";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 5433767100);
             }
 
             return $name;
@@ -126,7 +126,7 @@ abstract class AbstractField implements TcaConfigurationInterface
         return $this->options[$name];
     }
 
-    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder): void
     {
         $fieldName = $this->getOption('name');
 
@@ -155,7 +155,7 @@ abstract class AbstractField implements TcaConfigurationInterface
                 $msg = "Only one field can specify the record type for table $tcaBuilder.";
                 $msg .= " Tried using field " . $fieldName . " as type field.";
                 $msg .= " Field " . $ctrl['type'] . " is already defined as type field.";
-                throw new \RuntimeException($msg);
+                throw new \RuntimeException($msg, 1235114896);
             }
 
             $ctrl['type'] = $fieldName;

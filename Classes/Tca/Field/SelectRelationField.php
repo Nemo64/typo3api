@@ -54,7 +54,7 @@ class SelectRelationField extends AbstractField
                 $value = $item[1];
                 if (!preg_match('/^\d+$/', $value)) {
                     $msg = "SelectRelationField options may only be numeric, got '$value'.";
-                    throw new InvalidOptionsException($msg);
+                    throw new InvalidOptionsException($msg, 6417730581);
                 }
             }
 

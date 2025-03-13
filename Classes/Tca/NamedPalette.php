@@ -16,7 +16,7 @@ class NamedPalette extends CompoundTcaConfiguration
     public function __construct(string $name, array $children = [])
     {
         if (preg_match('/[,;]/', $name)) {
-            throw new \RuntimeException("The name of a palette must not contain comma or semicolon, got $name");
+            throw new \RuntimeException("The name of a palette must not contain comma or semicolon, got $name", 4554214489);
         }
 
         parent::__construct($children);

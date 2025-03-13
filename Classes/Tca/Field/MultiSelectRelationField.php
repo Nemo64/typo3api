@@ -50,7 +50,7 @@ class MultiSelectRelationField extends AbstractField
 
         $resolver->setNormalizer('minitems', function (Options $options, $minItems) {
             if ($minItems < 0) {
-                throw new InvalidOptionsException("Minitems can't be smaller than 0, got $minItems.");
+                throw new InvalidOptionsException("Minitems can't be smaller than 0, got $minItems.", 8905750516);
             }
 
             if (
@@ -61,7 +61,7 @@ class MultiSelectRelationField extends AbstractField
                 $msg = "minitems can't be used if the foreign_table has enablecolumns. This is to prevent unexpected behavior.";
                 $msg .= " Someone could create a relation and disable the related record (eg. by setting endtime).";
                 $msg .= " Typo3 can't catch that so it is better to just not use minitems in combination with enablecolumns.";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 7165912633);
             }
 
             return $minItems;
@@ -72,7 +72,7 @@ class MultiSelectRelationField extends AbstractField
     {
         if (!$tcaBuilder instanceof TableBuilderContext) {
             $type = get_debug_type($tcaBuilder);
-            throw new \RuntimeException("Expected " . TableBuilderContext::class . ", got $type");
+            throw new \RuntimeException("Expected " . TableBuilderContext::class . ", got $type", 8630314246);
         }
 
         return [

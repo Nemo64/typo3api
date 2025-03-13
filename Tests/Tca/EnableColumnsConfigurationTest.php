@@ -39,13 +39,7 @@ class EnableColumnsConfigurationTest extends UnitTestCase
                         ]
                     ]
                 ],
-                'columns' => [
-                    'hidden' => $GLOBALS['TCA']['tt_content']['columns']['hidden'],
-                    'starttime' => $GLOBALS['TCA']['tt_content']['columns']['starttime'],
-                    'endtime' => $GLOBALS['TCA']['tt_content']['columns']['endtime'],
-                    'fe_group' => $GLOBALS['TCA']['tt_content']['columns']['fe_group'],
-                    'editlock' => $GLOBALS['TCA']['tt_content']['columns']['editlock'],
-                ],
+                'columns' => [],
                 'types' => [
                     '1' => [
                         'showitem' => implode(', ', [

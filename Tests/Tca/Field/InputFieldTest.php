@@ -16,7 +16,7 @@ class InputFieldTest extends AbstractFieldTest
         return new InputField($name, $options);
     }
 
-    public function assertBasicCtrlChange(AbstractField $field)
+    public function assertBasicCtrlChange(AbstractField $field): void
     {
         $stubTable = new TableBuilderContext('stub_table', '1');
         $ctrl = [];

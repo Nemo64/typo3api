@@ -14,8 +14,6 @@ class ImageFieldTest extends FileFieldTest
 
     protected function createFieldInstance(string $name, array $options = []): AbstractField
     {
-        // require 'vendor/typo3/cms/typo3/sysext/core/Configuration/DefaultConfiguration.php';
-        $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'] = 'gif,jpg,jpeg,tif,tiff,bmp,pcx,tga,png,pdf,ai,svg';
         return new ImageField($name, $options);
     }
 
@@ -37,7 +35,9 @@ class ImageFieldTest extends FileFieldTest
         $expectedColumns = [
             $field->getName() => [
                 'label' => $field->getOption('label'),
-                'config' => ExtensionManagementUtility::getFileFieldTCAConfig($field->getName(), [
+                'config' => [
+                    'type' => 'file',
+                    'allowed' => ['common-image-types'],
                     'minitems' => 0,
                     'maxitems' => 100,
                     'appearance' => [
@@ -58,34 +58,34 @@ class ImageFieldTest extends FileFieldTest
                                 --palette--;;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
-                            File::FILETYPE_TEXT => [
+                            \TYPO3\CMS\Core\Resource\FileType::TEXT->value => [
                                 'showitem' => '
                                 --palette--;;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
-                            File::FILETYPE_IMAGE => [
+                            \TYPO3\CMS\Core\Resource\FileType::IMAGE->value => [
                                 'showitem' => '
                                 --palette--;;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
-                            File::FILETYPE_AUDIO => [
+                            \TYPO3\CMS\Core\Resource\FileType::AUDIO->value => [
                                 'showitem' => '
                                 --palette--;;audioOverlayPalette,
                                 --palette--;;filePalette'
                             ],
-                            File::FILETYPE_VIDEO => [
+                            \TYPO3\CMS\Core\Resource\FileType::VIDEO->value => [
                                 'showitem' => '
                                 --palette--;;videoOverlayPalette,
                                 --palette--;;filePalette'
                             ],
-                            File::FILETYPE_APPLICATION => [
+                            \TYPO3\CMS\Core\Resource\FileType::APPLICATION->value => [
                                 'showitem' => '
                                 --palette--;;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ]
                         ]
-                    ]
-                ], 'gif,jpg,jpeg,tif,tiff,png')
+                    ],
+                ]
             ]
         ];
 

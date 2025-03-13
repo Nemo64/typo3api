@@ -9,7 +9,7 @@ use Typo3Api\Builder\Context\TcaBuilderContext;
 
 class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTabInterface
 {
-    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder): void
     {
         if (!isset($ctrl['enablecolumns'])) {
             $ctrl['enablecolumns'] = [];
@@ -18,19 +18,12 @@ class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTa
         $ctrl['enablecolumns']['starttime'] = 'starttime';
         $ctrl['enablecolumns']['endtime'] = 'endtime';
         $ctrl['enablecolumns']['fe_group'] = 'fe_group';
-
         $ctrl['editlock'] = 'editlock';
     }
 
     public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
-        return [
-            'hidden' => $GLOBALS['TCA']['tt_content']['columns']['hidden'],
-            'starttime' => $GLOBALS['TCA']['tt_content']['columns']['starttime'],
-            'endtime' => $GLOBALS['TCA']['tt_content']['columns']['endtime'],
-            'fe_group' => $GLOBALS['TCA']['tt_content']['columns']['fe_group'],
-            'editlock' => $GLOBALS['TCA']['tt_content']['columns']['editlock'],
-        ];
+        return [];
     }
 
     public function getPalettes(TcaBuilderContext $tcaBuilder): array

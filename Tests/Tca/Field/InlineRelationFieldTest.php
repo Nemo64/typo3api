@@ -29,7 +29,7 @@ class InlineRelationFieldTest extends AbstractFieldTest
 
         $ctrl = [];
         $field->modifyCtrl($ctrl, $testTable);
-        unset($ctrl['EXT']); // remove extension
+        unset($ctrl['security']);
         $this->assertEmpty($ctrl, "No modification to ctrl is done");
         $this->assertEquals(
             ['hideTable' => true],
@@ -96,7 +96,7 @@ class InlineRelationFieldTest extends AbstractFieldTest
      * @dataProvider validNameProvider
      * @param string $fieldName
      */
-    public function testIndex(string $fieldName)
+    public function testIndex(string $fieldName): void
     {
         $testTable = new TableBuilderContext('stub_table', '1');
         $field = $this->createFieldInstance($fieldName, ['index' => true]);
@@ -124,7 +124,7 @@ class InlineRelationFieldTest extends AbstractFieldTest
      * @dataProvider validNameProvider
      * @param string $fieldName
      */
-    public function testLocalize(string $fieldName)
+    public function testLocalize(string $fieldName): void
     {
         $stubTable = new TableBuilderContext('stub_table', '1');
 
@@ -144,5 +144,4 @@ class InlineRelationFieldTest extends AbstractFieldTest
         $this->assertBasicShowItem($field);
         $this->assertBasicDatabase($field);
     }
-
 }

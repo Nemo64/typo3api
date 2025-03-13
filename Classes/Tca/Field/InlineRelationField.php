@@ -48,7 +48,7 @@ class InlineRelationField extends AbstractField
 
         $resolver->setNormalizer('minitems', function (Options $options, $minItems) {
             if ($minItems < 0) {
-                throw new InvalidOptionsException("Minitems can't be smaller than 0, got $minItems.");
+                throw new InvalidOptionsException("Minitems can't be smaller than 0, got $minItems.", 4563534868);
             }
 
             if (
@@ -59,23 +59,24 @@ class InlineRelationField extends AbstractField
                 $msg = "minitems can't be used if the foreign_table has enablecolumns. This is to prevent unexpected behavior.";
                 $msg .= " Someone could create a relation and disable the related record (eg. by setting endtime).";
                 $msg .= " Typo3 can't catch that so it is better to just not use minitems in combination with enablecolumns.";
-                throw new InvalidOptionsException($msg);
+                throw new InvalidOptionsException($msg, 5465212067);
             }
 
             return $minItems;
         });
     }
 
-    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder): void
     {
         parent::modifyCtrl($ctrl, $tcaBuilder);
+        $ctrl['security']['ignorePageTypeRestriction'] = true;
 
         $foreignTable = $this->getOption('foreign_table');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
             $msg = "Configure $foreignTable before adding it in the irre configuraiton of $tcaBuilder.";
             $msg .= "\nThis can also be a loading order issue of tca files. You can try to put the inline relation into TCA/Overrides.";
             $msg .= "\nIf you just need the foreign table in this relation, you might also consider configuring it inline here.";
-            throw new \RuntimeException($msg);
+            throw new \RuntimeException($msg, 5854065063);
         }
 
         $foreignTableDefinition = $GLOBALS['TCA'][$foreignTable];
@@ -91,10 +92,6 @@ class InlineRelationField extends AbstractField
 
             // ensure only this relation sees the other table
             $GLOBALS['TCA'][$foreignTable]['ctrl']['hideTable'] = true;
-
-            // since this table can't normally be created anymore, remove creation restrictions
-            // ExtensionManagementUtility::allowTableOnStandardPages($foreignTable);
-            $GLOBALS['TCA']['pages']['ctrl']['EXT']['typo3api']['allow_tables'][] = $foreignTable;
         }
     }
 
@@ -102,7 +99,7 @@ class InlineRelationField extends AbstractField
     {
         $foreignTable = $this->getOption('foreign_table');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
-            throw new \RuntimeException("Configure $foreignTable before adding it in the irre configuraiton of $tcaBuilder");
+            throw new \RuntimeException("Configure $foreignTable before adding it in the irre configuraiton of $tcaBuilder", 5855784553);
         }
 
         $foreignTableDefinition = $GLOBALS['TCA'][$foreignTable];

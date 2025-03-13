@@ -19,7 +19,7 @@ class CacheTagConfiguration implements TcaConfigurationInterface
     {
     }
 
-    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder): void
     {
         $ctrl['EXT']['typo3api']['cache_tags'][$this->group][$this->tag] = $this->tag;
     }

@@ -39,13 +39,10 @@ $options['minitems'] === 0,
 
         $normalizeFileExtensions = function (Options $options, $fileExtensions) {
             if (is_string($fileExtensions)) {
-                $fileExtensions = GeneralUtility::trimExplode(',', $fileExtensions);
+                $fileExtensions = GeneralUtility::trimExplode(',', $fileExtensions, true);
             }
 
-            /**
-             * @phpstan-ignore-next-line
-             */
-            return implode(',', array_filter($fileExtensions, 'strlen'));
+            return $fileExtensions;
         };
         $resolver->setNormalizer('allowedFileExtensions', $normalizeFileExtensions);
         $resolver->setNormalizer('disallowedFileExtensions', $normalizeFileExtensions);
@@ -53,7 +50,7 @@ $options['minitems'] === 0,
         /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('minitems', function (Options $options, $minitems) {
             if ($minitems < 0) {
-                throw new InvalidOptionsException("minitems must not be smaller than 0");
+                throw new InvalidOptionsException("minitems must not be smaller than 0", 6412726726);
             }
 
             return $minitems;
@@ -61,7 +58,7 @@ $options['minitems'] === 0,
 
         $resolver->setNormalizer('maxitems', function (Options $options, $maxitems) {
             if ($maxitems < $options['minitems']) {
-                throw new InvalidOptionsException("maxitems must not be smaller than minitems");
+                throw new InvalidOptionsException("maxitems must not be smaller than minitems", 4029534310);
             }
 
             return $maxitems;
@@ -70,24 +67,25 @@ $options['minitems'] === 0,
 
     public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder): array
     {
-        return ExtensionManagementUtility::getFileFieldTCAConfig(
-            $this->getOption('name'),
-            [
-                'minitems' => $this->getOption('minitems'),
-                'maxitems' => $this->getOption('maxitems'),
-                'appearance' => [
-                    'collapseAll' => $this->getOption('collapseAll'),
-                    'showPossibleLocalizationRecords' => $this->getOption('localize'),
-                    'showAllLocalizationLink' => $this->getOption('localize'),
-                    'showSynchronizationLink' => $this->getOption('localize'),
-                    'enabledControls' => [
-                        'hide' => $this->getOption('allowHide'),
-                        'localize' => $this->getOption('localize'),
-                    ]
+        $ret = [
+            'type' => 'file',
+            'minitems' => $this->getOption('minitems'),
+            'maxitems' => $this->getOption('maxitems'),
+            'appearance' => [
+                'collapseAll' => $this->getOption('collapseAll'),
+                'showPossibleLocalizationRecords' => $this->getOption('localize'),
+                'showAllLocalizationLink' => $this->getOption('localize'),
+                'showSynchronizationLink' => $this->getOption('localize'),
+                'enabledControls' => [
+                    'hide' => $this->getOption('allowHide'),
+                    'localize' => $this->getOption('localize'),
                 ]
-            ],
-            $this->getOption('allowedFileExtensions'),
-            $this->getOption('disallowedFileExtensions')
-        );
+            ]
+        ];
+        if ($this->getOption('allowedFileExtensions')) {
+            $ret['allowed'] = $this->getOption('allowedFileExtensions');
+        }
+
+        return $ret;
     }
 }
