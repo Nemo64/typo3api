@@ -25,7 +25,7 @@ class SelectField extends AbstractField
             // items is the normal typo3 compatible item list
             // if not defined, it will be generated from the value list
             'items' => fn(Options $options) => array_map(static function ($value) {
-                $label = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $value);
+                $label = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], (string) $value);
                 $label = ucfirst(strtolower(trim($label)));
                 return [$label, $value];
             }, $options['values']),
