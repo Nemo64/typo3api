@@ -22,10 +22,4 @@ return function (ContainerConfigurator $configurator): void {
             'identifier' => 'typo3api-builder/sql-schema',
             'event' => AlterTableDefinitionStatementsEvent::class
         ]);
-
-    $services->set(RegisterWizard::class)
-        ->tag('event.listener', [
-            'identifier' => 'typo3api-builder/register-wizard',
-            'event' => ModifyLoadedPageTsConfigEvent::class
-        ]);
 };

@@ -80,9 +80,13 @@ class ContentElementConfiguration implements TcaConfigurationInterface
             },
             'section' => 'common',
             'headline' => 'normal',
+            'relativeToField' => '',
+            'relativePosition' => '',
         ]);
 
         $this->optionsResolver->setAllowedValues('headline', array_keys(self::HEADLINE));
+        $this->optionsResolver->setAllowedTypes('relativeToField', 'string');
+        $this->optionsResolver->setAllowedValues('relativePosition', ['', 'replace', 'before', 'after']);
 
         // these options will be passed by #getOptions
         $this->optionsResolver->setRequired('typeName');
@@ -124,14 +128,25 @@ class ContentElementConfiguration implements TcaConfigurationInterface
                 ]),
         ];
 
-        // add new type to select choices
-        // TODO allow to define a position in dropdown
         if (!isset($GLOBALS['TCA']['tt_content']['columns']['CType']['extended'])) {
             $GLOBALS['TCA']['tt_content']['columns']['CType']['extended'] = true;
             $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = ['Extended', '--div--'];
         }
-        $newSelectItem = [$options['name'], $options['typeName'], $options['icon']];
-        $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = $newSelectItem;
+
+        // add new type to select choices
+        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTcaSelectItem(
+            'tt_content',
+            'CType',
+            [
+                'label' => $options['name'],
+                'description' => $options['description'],
+                'value' => $options['typeName'],
+                'icon' => $options['icon'],
+                'group' => $options['section'],
+            ],
+            $options['relativeToField'],
+            $options['relativePosition'],
+        );
     }
 
     public function getColumns(TcaBuilderContext $tcaBuilder): array
