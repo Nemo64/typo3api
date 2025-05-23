@@ -78,7 +78,7 @@ class ContentElementConfiguration implements TcaConfigurationInterface
                 ksort($icons);
                 return reset($icons);
             },
-            'section' => 'common',
+            'section' => 'default',
             'headline' => 'normal',
             'relativeToField' => '',
             'relativePosition' => '',
