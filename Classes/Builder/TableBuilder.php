@@ -248,7 +248,7 @@ class TableBuilder implements TcaBuilderInterface
     protected function addColumns(array &$tca, TcaConfigurationInterface $configuration): void
     {
         $columns = $configuration->getColumns($this->context);
-        $existingColumns = $tca['columns'];
+        $existingColumns = $tca['columns'] ?? [];
         $missingColumns = array_diff(array_keys($columns), array_keys($existingColumns));
 
         if (count($missingColumns) === count($columns)) {
