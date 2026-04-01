@@ -69,7 +69,6 @@ class InlineRelationField extends AbstractField
     public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder): void
     {
         parent::modifyCtrl($ctrl, $tcaBuilder);
-        $ctrl['security']['ignorePageTypeRestriction'] = true;
 
         $foreignTable = $this->getOption('foreign_table');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
@@ -92,6 +91,8 @@ class InlineRelationField extends AbstractField
 
             // ensure only this relation sees the other table
             $GLOBALS['TCA'][$foreignTable]['ctrl']['hideTable'] = true;
+            // allow record to be inserted on pages of any doktype
+            $GLOBALS['TCA'][$foreignTable]['ctrl']['security']['ignorePageTypeRestriction'] = true;
         }
     }
 
